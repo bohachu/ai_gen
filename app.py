@@ -1,99 +1,57 @@
 import os
 
 import openai
+import uvicorn
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from starlette.responses import StreamingResponse
 
-load_dotenv()  # 讀取.env文件
-api_key = os.getenv("OPENAI_API_KEY")  # 獲取API密鑰
+# 載入 .env 檔案
+load_dotenv()
+# Set up the OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# Define the FastAPI app
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-class GeneralModel:
-    def __init__(self):
-        print("Model Initialization--->")
-
-    def query(self, prompt, myKwargs={}):
-        kwargs = {
-            "temperature": 0.9,
-            "max_tokens": 600,
-        }
-        for kwarg in myKwargs:
-            kwargs[kwarg] = myKwargs[kwarg]
-
-        r = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", messages=[{"role": "system", "content": prompt}], **kwargs
-        )
-        return r["choices"][0]["message"]["content"].strip()
-
-    def model_prediction(self, inp):
-        openai.api_key = os.getenv("OPENAI_API_KEY")
-        output = self.query(inp)
-        return output
+# Define the request body for the API endpoint
+class QuestionRequest(BaseModel):
+    question: str
 
 
-model = GeneralModel()
+@app.get("/")
+async def root():
+    return RedirectResponse("/static/index.html")
 
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root():
-    html_content = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FastAPI GPT Code Generator</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    </head>
-    <body>
-        <div class="container">
-            <h1 class="mt-5">FastAPI GPT Code Generator</h1>
-            <form id="input-form">
-                <div class="form-group">
-                    <label for="input-text">Enter your natural language:</label>
-                    <textarea class="form-control" id="input-text" rows="5"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Generate Code</button>
-            </form>
-            <div class="mt-3">
-                <h3>Generated Code:</h3>
-                <pre id="output-code"></pre>
-            </div>
-        </div>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <script>
-            const form = document.getElementById("input-form");
-            const inputText = document.getElementById("input-text");
-            const outputCode = document.getElementById("output-code");
-            form.addEventListener("submit", async (event) => {
-                event.preventDefault();
-                const response = await fetch("/generate-code", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ text: inputText.value }),
-                });
-                const generatedCode = await response.text();
-                outputCode.textContent = generatedCode;
-            });
-        </script>
-    </body>
-    </html>
-    """
-    return html_content
+# Define the API endpoint
+@app.post("/ask")
+async def ask_question(request: QuestionRequest):
+    # Send a chat completion request with the question and stream the response
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": request.question}],
+        temperature=0,
+        stream=True
+    )
+
+    async def generate():
+        # Iterate over the response chunks and concatenate the content
+        for chunk in response:
+            delta = chunk["choices"][0]["delta"]
+            if "content" in delta:
+                yield delta["content"]
+            if "finish_reason" in delta and delta["finish_reason"] == "stop":
+                break
+
+    return StreamingResponse(generate())
 
 
-@app.post("/generate-code")
-async def generate_code(request: Request):
-    data = await request.json()
-    input_text = data["text"]
-    generated_code = model.model_prediction(input_text)
-    return generated_code
+# Run the FastAPI app with uvicorn
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
