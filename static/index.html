@@ -4,24 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🍊自然橙 v1.0</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1ioAdwD1EPlKW3pb/Jr59F7W63q13A8z7yJre1" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybBud7M5zD/2Ql5+1j1K/K7l7f2g5V7hA9/YpLp7y8CO24g0d" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.30.1/min/vs/loader.js"></script>
   <style>
     html, body {
       height: 100%;
       margin: 0;
+      background-color: #1e1e1e;
     }
     .container {
       height: 100%;
       display: flex;
       flex-direction: column;
+      color: #dcdcdc;
     }
     .title {
-      text-align: center;
+      text-align: left;
       margin-bottom: 1rem;
+      margin-left: 1rem;
     }
     #question-form {
-      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      margin-top: 1rem;
+      margin-right: 1rem;
     }
     #question-input {
       flex-grow: 1;
@@ -34,48 +42,12 @@
 <body>
   <div class="container">
     <h1 class="title">🍊自然橙 v1.0</h1>
-    <form id="question-form" class="d-flex mb-3">
-      <input type="text" id="question-input" class="form-control" placeholder="Ask your question here...">
-      <button type="submit" class="btn btn-primary ms-2">寫吧</button>
+    <form id="question-form">
+      <input type="text" id="question-input" class="form-control me-2" placeholder="Ask your question here...">
+      <button type="submit" class="btn btn-primary">寫吧</button>
     </form>
     <div id="response-container" class="w-100 h-100"></div>
   </div>
-
-  <script>
-    const questionForm = document.getElementById("question-form");
-    const questionInput = document.getElementById("question-input");
-    const responseContainer = document.getElementById("response-container");
-
-    let editor;
-    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs' } });
-    require(['vs/editor/editor.main'], function () {
-      editor = monaco.editor.create(responseContainer, {
-        language: 'python',
-        theme: 'vs-dark',
-      });
-    });
-
-    questionForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      editor.setValue("Loading...");
-      const question = questionInput.value;
-
-      try {
-        const response = await fetch("/ask", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ question }),
-        });
-
-        const result = await response.text();
-        editor.setValue(result);
-      } catch (error) {
-        editor.setValue("An error occurred. Please try again.");
-      }
-    });
-  </script>
+  <script src="./coding.js"></script>
 </body>
 </html>
