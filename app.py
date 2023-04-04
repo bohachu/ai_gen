@@ -11,7 +11,6 @@ api_key = os.getenv("OPENAI_API_KEY")  # 獲取API密鑰
 app = FastAPI()
 
 
-# OpenAI GPT-4 模型
 class GeneralModel:
     def __init__(self):
         print("Model Initialization--->")
@@ -51,7 +50,7 @@ async def read_root():
     </head>
     <body>
         <div class="container">
-            <h1 class="mt-5">FastAPI GPT-4 Code Generator</h1>
+            <h1 class="mt-5">FastAPI GPT Code Generator</h1>
             <form id="input-form">
                 <div class="form-group">
                     <label for="input-text">Enter your natural language:</label>
