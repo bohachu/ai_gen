@@ -4,11 +4,13 @@ import openai
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 load_dotenv()  # 讀取.env文件
 api_key = os.getenv("OPENAI_API_KEY")  # 獲取API密鑰
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
 
 class GeneralModel:
