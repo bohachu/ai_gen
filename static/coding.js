@@ -2,6 +2,7 @@ const questionForm = document.getElementById('question-form')
 const questionInput = document.getElementById('question-input')
 const responseContainer = document.getElementById('response-container')
 
+
 let editor
 require.config({
   paths: {
@@ -16,7 +17,8 @@ require(['vs/editor/editor.main'], function () {
   })
 })
 
-questionForm.addEventListener('submit', async (e) => {
+const askBtn = document.getElementById('ask-btn')
+askBtn.addEventListener('click', async (e) => {
   e.preventDefault()
 
   const question = questionInput.value
@@ -47,7 +49,8 @@ questionForm.addEventListener('submit', async (e) => {
 })
 
 const runBtn = document.getElementById('run-btn')
-runBtn.addEventListener('click', async () => {
+runBtn.addEventListener('click', async (e) => {
+  e.preventDefault()
   const html = editor.getValue() // 取得編輯器內容
 
   // 發送 HTTP POST 請求將 HTML 內容保存到後端
