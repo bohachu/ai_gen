@@ -46,21 +46,33 @@ questionForm.addEventListener('submit', async (e) => {
   }
 })
 
-
-// 新增按鈕點擊事件
 const runBtn = document.getElementById('run-btn')
-runBtn.addEventListener('click', () => {
+runBtn.addEventListener('click', async () => {
   const html = editor.getValue() // 取得編輯器內容
-  const parser = new DOMParser() // 建立 DOMParser
-  const doc = parser.parseFromString(html, 'text/html') // 將 HTML 字串轉換成 DOM 物件
-  const body = doc.querySelector('body') // 取得 body 元素
 
-  // 將 HTML 結果顯示於 modal 中
-  const modal = new bootstrap.Modal(document.getElementById('html-modal'))
-  const iframe = document.getElementById('html-iframe')
-  iframe.src = 'about:blank'
-  iframe.contentWindow.document.open()
-  iframe.contentWindow.document.write(body.innerHTML) // 將 body 元素內容寫入 iframe
-  iframe.contentWindow.document.close()
-  modal.show()
+  // 發送 HTTP POST 請求將 HTML 內容保存到後端
+  try {
+    const response = await fetch('/write_file', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        file_name: 'generated.html',
+        path: './static/ai_gen',
+        content: html,
+      }),
+    })
+
+    const result = await response.json()
+    if (result.status !== 'success') {
+      throw new Error(result.message)
+    }
+
+    // 在新分頁中顯示 HTML 結果
+    const newTab = window.open('/static/ai_gen/generated.html', '_blank') // 開啟新分頁
+  } catch (error) {
+    console.error(error)
+    alert('An error occurred. Please try again.')
+  }
 })
