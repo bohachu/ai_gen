@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🍊自然橙 v1.0</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1ioAdwD1EPlKW3pb/Jr59F7W63q13A8z7yJre1" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybBud7M5zD/2Ql5+1j1K/K7l7f2g5V7hA9/YpLp7y8CO24g0d" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
+  <title>自然橙</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.30.1/min/vs/loader.js"></script>
   <style>
     html, body {
       height: 100%;
       margin: 0;
-      background-color: #1e1e1e;
+      background-color: #303030; /* 將背景色改為黑灰色 */
     }
     .container {
       height: 100%;
@@ -20,31 +20,32 @@
       flex-direction: column;
       color: #dcdcdc;
     }
-    .title {
-      text-align: left;
-      margin-bottom: 1rem;
-      margin-left: 1rem;
-    }
     #question-form {
       display: flex;
-      align-items: center;
-      margin-top: 1rem;
-      margin-right: 1rem;
+      flex-direction: row;
+      align-items: flex-start;
+      margin: 1rem;
     }
     #question-input {
       flex-grow: 1;
+      margin-right: 1rem;
+      background-color: #424242; /* 將輸入框底色改為深灰色 */
+      color: #dcdcdc; /* 將字體顏色改為淺灰色 */
+      resize: vertical;
     }
     #response-container {
       flex-grow: 1;
+    }
+    #submit-btn { /* 新增 id 為 submit-btn 的按鈕 */
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 class="title">🍊自然橙 v1.0</h1>
     <form id="question-form">
-      <input type="text" id="question-input" class="form-control me-2" placeholder="Ask your question here...">
-      <button type="submit" class="btn btn-primary">寫吧</button>
+      <textarea id="question-input" class="form-control" placeholder="Ask your question here..." rows="3"></textarea>
+      <button type="submit" class="btn btn-primary" id="submit-btn">寫吧</button> <!-- 將按鈕移到輸入框右側 -->
     </form>
     <div id="response-container" class="w-100 h-100"></div>
   </div>
