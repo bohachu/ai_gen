@@ -1,7 +1,13 @@
-3* todo 不知道為什麼還是會有無窮迴圈跑不完，不停 request gpt 的問題
 2* todo 寫入後端檔案名稱現在固定，多使用者會撞擊到檔案名稱
 2* todo phaser js 字串動畫 show 不出來，有同源問題?
-1* todo 寫入後端時間太久，原因要檢驗是否 async 卡死嗎?
+
+== 2023-04-05 11:09 bowen ==
+11:46 done 已經有 tree file manager view, wow
+3* 11:46 DONE 要可以拆分更多高速迭代的檔案
+11:09 done 已經可以 Hyperit 能夠開啟檔案，可以編輯儲存
+done 11:09 不知道為什麼還是會有無窮迴圈跑不完，不停 request gpt 的問題
+1* pending 11:09 寫入後端時間太久，原因要檢驗是否 async 卡死嗎?
+ 
 
 == 2023-04-04 23:42 bowen ==
 00:06 done 已經可以寫入後端
