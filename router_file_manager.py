@@ -1,3 +1,5 @@
+import urllib
+from html import escape
 from pathlib import Path
 
 from fastapi import APIRouter
@@ -45,7 +47,8 @@ async def read_file_content(file_path: str = ...):
                     var editor = ace.edit("editor");
                     editor.setTheme("ace/theme/monokai");
                     editor.getSession().setMode("ace/mode/text");
-                    editor.getSession().setValue(`%s`);
+                    editor.getSession().setValue(decodeURIComponent(`%s`));
+                    editor.setFontSize(17);
                     editor.commands.addCommand({
                         name: 'save',
                         bindKey: {win: 'Ctrl-S', 'mac': 'Command-S'},
@@ -69,7 +72,7 @@ async def read_file_content(file_path: str = ...):
                 </script>
             </body>
         </html>
-    """ % (file_name, file_content, file_content, file_path))
+    """ % (file_name, escape(file_content), urllib.parse.quote(file_content), file_path))
 
 
 @router.post("/save_file_content/{file_path:path}")
